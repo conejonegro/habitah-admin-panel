@@ -84,6 +84,11 @@ export default function TicketDetailPage() {
   };
 
   const handleClose = async () => {
+    // Confirmación antes de cerrar definitivamente
+    const ok = confirm(
+      "¿Seguro que deseas cerrar este ticket? Esta acción no se puede deshacer."
+    );
+    if (!ok) return;
     setCloseError("");
     if (!id) return;
     setClosing(true);

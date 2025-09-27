@@ -41,7 +41,8 @@ export default function NuevoInquilinoPage() {
         uId,
         nombre,
         email,
-        edificioRef,
+        // Guardamos referencia al documento del edificio: /edificios/{edificioRef}
+        edificioRef: doc(db, "edificios", edificioRef),
         depaId: depaId || null,
         cuotaMensual: cuotaMensual === "" ? null : Number(cuotaMensual),
         activo: Boolean(activo),
@@ -182,4 +183,3 @@ export default function NuevoInquilinoPage() {
     </div>
   );
 }
-
