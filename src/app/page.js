@@ -38,7 +38,7 @@ export default function Home() {
         <div className="mb-12">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <a
-              href="#"
+              href="/edificios"
               className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 flex flex-col items-center text-center"
             >
               <BuildingOfficeIcon className="h-8 w-8 text-gray-700 mb-2" />

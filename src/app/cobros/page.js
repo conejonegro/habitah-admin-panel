@@ -81,12 +81,12 @@ export default function CobrosPage() {
   }, [items, q, status]);
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-none px-16 text-[16px] text-black space-y-6 bg-white">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-base text-gray-700 dark:text-gray-300 hover:underline"
+            className="inline-flex items-center gap-2 text-base text-black hover:underline"
           >
             <span aria-hidden>←</span>
             Volver
@@ -97,7 +97,7 @@ export default function CobrosPage() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-base text-black"
           >
             <option value="all">Todos</option>
             <option value="pending">Pendientes</option>
@@ -108,52 +108,52 @@ export default function CobrosPage() {
             placeholder="Buscar..."
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="w-full sm:w-64 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+            className="w-full sm:w-64 rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-          <thead className="bg-gray-50 dark:bg-gray-900">
+      <div className="overflow-hidden rounded-xl border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50 text-black">
             <tr>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Usuario</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Edificio</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Unidad</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Monto</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Vence</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Estado</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Usuario</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Edificio</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Unidad</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Monto</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Vence</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Estado</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-950">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {loading && (
               <tr>
-                <td className="px-4 py-6 text-base text-gray-500" colSpan={7}>
+                <td className="px-4 py-6 text-base text-black" colSpan={7}>
                   Cargando...
                 </td>
               </tr>
             )}
             {!loading && filtered.length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-base text-gray-500" colSpan={7}>
+                <td className="px-4 py-6 text-base text-black" colSpan={7}>
                   No hay cobros.
                 </td>
               </tr>
             )}
             {!loading &&
               filtered.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                <tr key={p.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 text-base">
                     <div className="flex flex-col">
-                      <span className="font-medium">{p.email || p.userId || "—"}</span>
-                      <span className="text-gray-500 text-sm">{p.masked || p.last4 ? `**** ${p.last4 || ""}` : ""}</span>
+                      <span className="font-medium text-black">{p.email || p.userId || "—"}</span>
+                      <span className="text-black/70 text-sm">{p.masked || p.last4 ? `**** ${p.last4 || ""}` : ""}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-base text-gray-700 dark:text-gray-300">{displayRef(p.edificioRef)}</td>
-                  <td className="px-4 py-3 text-base text-gray-700 dark:text-gray-300">{p.unidadId || "—"}</td>
-                  <td className="px-4 py-3 text-base">{formatAmount(p.amount)}</td>
-                  <td className="px-4 py-3 text-base text-gray-600 dark:text-gray-400">{formatDate(p.dueDate)}</td>
+                  <td className="px-4 py-3 text-base text-black">{displayRef(p.edificioRef)}</td>
+                  <td className="px-4 py-3 text-base text-black">{p.unidadId || "—"}</td>
+                  <td className="px-4 py-3 text-base text-black">{formatAmount(p.amount)}</td>
+                  <td className="px-4 py-3 text-base text-black">{formatDate(p.dueDate)}</td>
                   <td className="px-4 py-3 text-base">
                     <span className={`rounded-full px-2 py-1 text-base ${p.isPaid ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-800"}`}>
                       {p.isPaid ? "Pagado" : "Pendiente"}
@@ -161,7 +161,7 @@ export default function CobrosPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <a
-                      className="text-base text-gray-900 dark:text-gray-100 hover:underline"
+                      className="text-base text-black hover:underline"
                       href={`/cobros/${encodeURIComponent(p.id)}`}
                     >
                       Ver detalle
@@ -175,4 +175,3 @@ export default function CobrosPage() {
     </div>
   );
 }
-

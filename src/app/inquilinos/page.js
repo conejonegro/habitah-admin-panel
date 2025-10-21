@@ -8,6 +8,7 @@ export default function InquilinosPage() {
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [edificios, setEdificios] = useState([]);
+  const [edificioMap, setEdificioMap] = useState({}); // id -> display (nombre || code || id)
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({
     nombre: "",
@@ -60,7 +61,13 @@ export default function InquilinosPage() {
         );
         const snap = await getDocs(query(collection(db, "edificios"), orderBy("nombre")));
         const rows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        if (active) setEdificios(rows);
+        if (active) {
+          setEdificios(rows);
+          const map = Object.fromEntries(
+            rows.map((e) => [e.id, e.nombre || e.code || e.id])
+          );
+          setEdificioMap(map);
+        }
       } catch (e) {
         // Si no existe la colección o no hay permisos, solo ignora y deja vacío
         console.warn("No se pudo cargar edificios", e);
@@ -86,11 +93,11 @@ export default function InquilinosPage() {
     const term = q.toLowerCase();
     if (!term) return items;
     return items.filter((u) =>
-      [u.nombre, u.email, displayValue(u.edificioRef), u.depaId, u.uId]
+      [u.nombre, u.email, (u.edificioRef?.id && edificioMap[u.edificioRef.id]) || displayValue(u.edificioRef), u.depaId, u.uId]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(term))
     );
-  }, [items, q]);
+  }, [items, q, edificioMap]);
 
   const startEdit = (u) => {
     setEditingId(u.id);
@@ -158,12 +165,12 @@ export default function InquilinosPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-none px-16 text-[16px] text-black space-y-6 bg-white">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-base text-gray-700 dark:text-gray-300 hover:underline"
+            className="inline-flex items-center gap-2 text-base text-black hover:underline"
           >
             <span aria-hidden>←</span>
             Volver
@@ -176,7 +183,7 @@ export default function InquilinosPage() {
               placeholder="Buscar inquilinos..."
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
             />
           </div>
           <a
@@ -188,30 +195,30 @@ export default function InquilinosPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-          <thead className="bg-gray-50 dark:bg-gray-900">
+      <div className="overflow-hidden rounded-xl border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50 text-black">
             <tr>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Nombre</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Email</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Edificio</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Depa</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Cuota mensual</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">uId</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Acciones</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Nombre</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Email</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Edificio</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Depa</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Cuota mensual</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">uId</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Acciones</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-950">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {loading && (
               <tr>
-                <td className="px-4 py-6 text-base text-gray-500" colSpan={6}>
+                <td className="px-4 py-6 text-base text-black" colSpan={6}>
                   Cargando...
                 </td>
               </tr>
             )}
             {!loading && filtered.length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-base text-gray-500" colSpan={6}>
+                <td className="px-4 py-6 text-base text-black" colSpan={6}>
                   No hay inquilinos.
                 </td>
               </tr>
@@ -220,54 +227,54 @@ export default function InquilinosPage() {
               filtered.map((u) => {
                 const isEditing = editingId === u.id;
                 return (
-                  <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                  <tr key={u.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-base font-medium">
                       {isEditing ? (
                         <input
                           value={draft.nombre}
                           onChange={(e) => setDraft((d) => ({ ...d, nombre: e.target.value }))}
-                          className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-2 py-1"
+                          className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-black"
                         />
                       ) : (
                         u.nombre || "—"
                       )}
                     </td>
-                    <td className="px-4 py-3 text-base text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-base text-black">
                       {isEditing ? (
                         <input
                           type="email"
                           value={draft.email}
                           onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))}
-                          className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-2 py-1"
+                          className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-black"
                         />
                       ) : (
                         u.email || "—"
                       )}
                     </td>
-                    <td className="px-4 py-3 text-base text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-base text-black">
                       {isEditing ? (
                         <select
                           value={draft.edificioRefId}
                           onChange={(e) => setDraft((d) => ({ ...d, edificioRefId: e.target.value }))}
-                          className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-2 py-1"
+                          className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-black"
                         >
                           <option value="">—</option>
                           {edificios.map((e) => (
                             <option key={e.id} value={e.id}>
-                              {e.nombre || e.id}
+                              {e.nombre || e.code || e.id}
                             </option>
                           ))}
                         </select>
                       ) : (
-                        displayValue(u.edificioRef)
+                        (u.edificioRef?.id && edificioMap[u.edificioRef.id]) || displayValue(u.edificioRef)
                       )}
                     </td>
-                    <td className="px-4 py-3 text-base text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-base text-black">
                       {isEditing ? (
                         <input
                           value={draft.depaId}
                           onChange={(e) => setDraft((d) => ({ ...d, depaId: e.target.value }))}
-                          className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-2 py-1"
+                          className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-black"
                         />
                       ) : (
                         u.depaId || "—"
@@ -281,7 +288,7 @@ export default function InquilinosPage() {
                           step="0.01"
                           value={draft.cuotaMensual}
                           onChange={(e) => setDraft((d) => ({ ...d, cuotaMensual: e.target.value }))}
-                          className="w-full rounded border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-2 py-1"
+                          className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-black"
                         />
                       ) : u.cuotaMensual != null ? (
                         `$${u.cuotaMensual}`
@@ -289,11 +296,11 @@ export default function InquilinosPage() {
                         "—"
                       )}
                     </td>
-                    <td className="px-4 py-3 text-base text-gray-500">{u.uId || u.id}</td>
+                    <td className="px-4 py-3 text-base text-black">{u.uId || u.id}</td>
                     <td className="px-4 py-3 text-base">
                       {isEditing ? (
                         <div className="flex items-center gap-2">
-                          <label className="inline-flex items-center gap-2 text-sm text-gray-600">
+                          <label className="inline-flex items-center gap-2 text-sm text-black">
                             <input
                               type="checkbox"
                               checked={draft.activo}
@@ -309,7 +316,7 @@ export default function InquilinosPage() {
                           </button>
                           <button
                             onClick={cancelEdit}
-                            className="rounded bg-gray-200 dark:bg-gray-800 px-3 py-1"
+                            className="rounded bg-gray-200 px-3 py-1"
                           >
                             Cancelar
                           </button>
@@ -323,7 +330,7 @@ export default function InquilinosPage() {
                           </span>
                           <button
                             onClick={() => startEdit(u)}
-                            className="rounded bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-3 py-1 hover:opacity-90"
+                            className="rounded bg-gray-900 text-white px-3 py-1 hover:opacity-90"
                           >
                             Editar
                           </button>

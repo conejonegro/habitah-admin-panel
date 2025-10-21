@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getDb } from "@/lib/firebase";
+import { listEdificiosBasic } from "@/lib/data/edificios";
 
 export default function NuevoInquilinoPage() {
   const router = useRouter();
@@ -15,6 +16,20 @@ export default function NuevoInquilinoPage() {
   const [activo, setActivo] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [edificios, setEdificios] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const list = await listEdificiosBasic();
+        if (active) setEdificios(list);
+      } catch (e) {
+        console.warn("No se pudieron cargar edificios", e);
+      }
+    })();
+    return () => { active = false; };
+  }, []);
 
   const handleSubmit = async () => {
     setError("");
@@ -59,15 +74,15 @@ export default function NuevoInquilinoPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <a href="/inquilinos" className="inline-flex items-center gap-2 text-base text-gray-700 dark:text-gray-300 hover:underline">
+    <div className="w-full max-w-none px-16 text-[16px] text-black space-y-6 bg-white">
+      <a href="/inquilinos" className="inline-flex items-center gap-2 text-base text-black hover:underline">
         <span aria-hidden>←</span>
         Volver a inquilinos
       </a>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+      <div className="rounded-xl border border-gray-200 p-5">
         <h2 className="text-xl font-semibold">Alta de inquilino</h2>
-        <p className="mt-1 text-base text-gray-600 dark:text-gray-400">
+        <p className="mt-1 text-base text-black/70">
           Registra un inquilino activo con su información básica.
         </p>
 
@@ -81,7 +96,7 @@ export default function NuevoInquilinoPage() {
                 required
                 type="text"
                 placeholder="UID de Firebase Auth"
-                className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
               />
             </div>
             <div>
@@ -92,7 +107,7 @@ export default function NuevoInquilinoPage() {
                 required
                 type="text"
                 placeholder="Nombre del inquilino"
-                className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -106,7 +121,7 @@ export default function NuevoInquilinoPage() {
                 required
                 type="email"
                 placeholder="correo@ejemplo.com"
-                className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
               />
             </div>
             <div>
@@ -115,12 +130,14 @@ export default function NuevoInquilinoPage() {
                 value={edificioRef}
                 onChange={(e) => setEdificioRef(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black"
               >
                 <option value="">Selecciona un edificio</option>
-                <option value="TORRE-LERDO">TORRE-LERDO</option>
-                <option value="TORRE-A">TORRE-A</option>
-                <option value="TORRE-B">TORRE-B</option>
+                {edificios.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.nombre || e.code || e.id}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -133,7 +150,7 @@ export default function NuevoInquilinoPage() {
                 onChange={(e) => setDepaId(e.target.value)}
                 type="text"
                 placeholder="p.ej. A-302"
-                className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
               />
             </div>
             <div>
@@ -145,7 +162,7 @@ export default function NuevoInquilinoPage() {
                 min="0"
                 step="0.01"
                 placeholder="p.ej. 3500"
-                className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -162,18 +179,18 @@ export default function NuevoInquilinoPage() {
           </div>
 
           {error && (
-            <p className="text-base text-red-600 dark:text-red-500">{error}</p>
+            <p className="text-base text-red-600">{error}</p>
           )}
 
           <div className="flex items-center justify-end gap-3">
-            <a href="/inquilinos" className="text-base text-gray-600 hover:underline">
+            <a href="/inquilinos" className="text-base text-black/70 hover:underline">
               Cancelar
             </a>
             <button
               type="button"
               disabled={loading}
               onClick={handleSubmit}
-              className="inline-flex items-center rounded-lg bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 text-base font-medium hover:opacity-90 disabled:opacity-50"
+              className="inline-flex items-center rounded-lg bg-gray-900 text-white px-4 py-2 text-base font-medium hover:opacity-90 disabled:opacity-50"
             >
               {loading ? "Guardando..." : "Guardar"}
             </button>

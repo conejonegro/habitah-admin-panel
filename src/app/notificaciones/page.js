@@ -56,12 +56,12 @@ export default function NotificacionesPage() {
   }, [items, q]);
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-none px-16 text-[16px] text-black space-y-6 bg-white">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-base text-gray-700 dark:text-gray-300 hover:underline"
+            className="inline-flex items-center gap-2 text-base text-black hover:underline"
           >
             <span aria-hidden>←</span>
             Volver
@@ -73,51 +73,51 @@ export default function NotificacionesPage() {
             placeholder="Buscar notificaciones..."
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700"
+            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-base outline-none focus:ring-2 focus:ring-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-          <thead className="bg-gray-50 dark:bg-gray-900">
+      <div className="w-full overflow-x-auto rounded-xl border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50 text-black">
             <tr>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Título</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Estado</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Alcance</th>
-              <th className="px-4 py-3 text-left text-base font-medium text-gray-500">Fecha</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Título</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Estado</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Alcance</th>
+              <th className="px-4 py-3 text-left text-base font-medium text-black">Fecha</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-950">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {loading && (
               <tr>
-                <td className="px-4 py-6 text-base text-gray-500" colSpan={5}>
+                <td className="px-4 py-6 text-base text-black" colSpan={5}>
                   Cargando...
                 </td>
               </tr>
             )}
             {!loading && filtered.length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-base text-gray-500" colSpan={5}>
+                <td className="px-4 py-6 text-base text-black" colSpan={5}>
                   No hay notificaciones.
                 </td>
               </tr>
             )}
             {!loading &&
               filtered.map((n) => (
-                <tr key={n.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
-                  <td className="px-4 py-3 text-base font-medium">{n.nombre}</td>
+                <tr key={n.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-base font-medium text-black">{n.nombre}</td>
                   <td className="px-4 py-3 text-base">
-                    <span className="rounded-full bg-gray-100 dark:bg-gray-900 px-2 py-1 text-base">
+                    <span className="rounded-full bg-gray-100 px-2 py-1 text-base text-black">
                       {n.estado || "—"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-base text-gray-600 dark:text-gray-400">{displayValue(n.edificioRef)}</td>
-                  <td className="px-4 py-3 text-base text-gray-600 dark:text-gray-400">{n.createdAt?.toDate ? n.createdAt.toDate().toLocaleString() : "—"}</td>
+                  <td className="px-4 py-3 text-base text-black">{displayValue(n.edificioRef)}</td>
+                  <td className="px-4 py-3 text-base text-black">{n.createdAt?.toDate ? n.createdAt.toDate().toLocaleString() : "—"}</td>
                   <td className="px-4 py-3 text-right">
                     <a
-                      className="text-base text-gray-900 dark:text-gray-100 hover:underline"
+                      className="text-base text-black hover:underline"
                       href={`/notificaciones/${n.id}`}
                     >
                       Ver detalle
